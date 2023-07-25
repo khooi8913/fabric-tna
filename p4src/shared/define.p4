@@ -174,11 +174,20 @@ enum bit<8> BridgedMdType_t {
 // Also, lets the deparser know which type of mirroring to perform.
 // The width of mirror type is same as TNA's MirrorType_t(bit<3>) so we can easily use
 // it in the deparser.
+#if __TARGET_TOFINO__ == 2
+enum bit<4> FabricMirrorType_t {
+    INVALID = 0,
+    INT_REPORT = 1,
+    PACKET_IN = 2
+}
+#else
 enum bit<3> FabricMirrorType_t {
     INVALID = 0,
     INT_REPORT = 1,
     PACKET_IN = 2
 }
+#endif
+
 
 const MirrorId_t PACKET_IN_MIRROR_SESSION_ID = 0x1FF;
 

@@ -2,7 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include <core.p4>
+#if __TARGET_TOFINO__ == 2
+#include <t2na.p4>
+#else
 #include <tna.p4>
+#endif
 
 #include "shared/define.p4"
 #include "shared/header.p4"
@@ -41,7 +45,11 @@ control Acl (inout ingress_headers_t hdr,
     }
 
     action copy_to_cpu() {
+#if __TARGET_TOFINO__ == 2
+        ig_intr_md_for_dprsr.mirror_type = (bit<4>)FabricMirrorType_t.PACKET_IN;
+#else
         ig_intr_md_for_dprsr.mirror_type = (bit<3>)FabricMirrorType_t.PACKET_IN;
+#endif    
         fabric_md.mirror.bmd_type = BridgedMdType_t.INGRESS_MIRROR;
         fabric_md.mirror.mirror_session_id = PACKET_IN_MIRROR_SESSION_ID;
         acl_counter.count();

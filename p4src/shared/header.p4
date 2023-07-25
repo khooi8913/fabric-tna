@@ -19,8 +19,13 @@ header packet_in_header_t {
 header packet_out_header_t {
     @padding bit<7>   pad0;
     FabricPortId_t    egress_port;
+#if __TARGET_TOFINO__ == 2
+    @padding bit<1>   pad1;
+    QueueId_t         queue_id;
+#else
     @padding bit<3>   pad1;
     QueueId_t         queue_id;
+#endif
     @padding bit<5>   pad2;
     CpuLoopbackMode_t cpu_loopback_mode;
     bit<1>            do_forwarding;
@@ -390,14 +395,24 @@ struct fabric_ingress_metadata_t {
 // Common between different types of bridged metadata, used for lookup only in the egress parser.
 header common_egress_metadata_t {
     BridgedMdType_t       bmd_type;
+#if __TARGET_TOFINO__ == 2
+    @padding bit<4>       _pad;
+    FabricMirrorType_t    mirror_type;
+#else
     @padding bit<5>       _pad;
     FabricMirrorType_t    mirror_type;
+#endif
 }
 
 header packet_in_mirror_metadata_t {
     BridgedMdType_t       bmd_type;
+#if __TARGET_TOFINO__ == 2
+    @padding bit<4>       _pad0;
+    FabricMirrorType_t    mirror_type;
+#else
     @padding bit<5>       _pad0;
     FabricMirrorType_t    mirror_type;
+#endif
     @padding bit<7>       _pad1;
     PortId_t              ingress_port;
 }

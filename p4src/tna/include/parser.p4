@@ -322,7 +322,11 @@ control FabricIngressMirror(
     in ingress_intrinsic_metadata_for_deparser_t ig_intr_md_for_dprsr) {
     Mirror() mirror;
     apply {
+#if __TARGET_TOFINO__ == 2
+        if (ig_intr_md_for_dprsr.mirror_type == (bit<4>)FabricMirrorType_t.PACKET_IN) {
+#else
         if (ig_intr_md_for_dprsr.mirror_type == (bit<3>)FabricMirrorType_t.PACKET_IN) {
+#endif
             mirror.emit<packet_in_mirror_metadata_t>(
                 fabric_md.mirror.mirror_session_id,
                 // packet_in_mirror_metadata_t
